@@ -1,0 +1,14 @@
+query ListDocuments($request: ListDocumentsRequest!) {
+  listDocuments(request: $request) {
+    documents {
+      id,
+      title,
+      outline,
+      content,
+      tags,
+      createdAt,
+      updatedAt
+    },
+    count
+  }
+}

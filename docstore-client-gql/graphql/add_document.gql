@@ -1,0 +1,11 @@
+mutation AddDocument($request: AddDocumentRequest!) {
+  addDocument(request: $request) {
+    id,
+    title,
+    outline,
+    content,
+    tags,
+    createdAt,
+    updatedAt
+  }
+}

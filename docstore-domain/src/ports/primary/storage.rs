@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 
+use crate::model::document::{AddDocumentRequest, Document, ListDocumentsRequest};
 use crate::model::error::Error;
-use crate::model::document::{AddDocumentRequest, ListDocumentsRequest, Document};
 
 #[async_trait]
 pub trait DocumentStorage {

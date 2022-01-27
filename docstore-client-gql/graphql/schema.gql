@@ -1,28 +1,37 @@
-input AddOwnerRequest {
-  name: String!
+input AddDocumentRequest {
+  id: UUID!
+  title: String!
+  outline: String!
+  content: String!
+  tags: [String!]!
+  genre: String!
 }
 
-input ListOwnersRequest {
+type DocumentResponse {
+  id: UUID!
+  title: String!
+  outline: String!
+  content: String!
+  tags: [String!]!
+  genre: String!
+}
+
+input ListDocumentsRequest {
   offset: Int!
   limit: Int!
 }
 
-type ListOwnersResponse {
-  owners: [OwnerResponse!]!
+type ListDocumentsResponse {
+  documents: [DocumentResponse!]!
   count: Int!
 }
 
 type Mutation {
-  addOwner(request: AddOwnerRequest!): OwnerResponse!
-}
-
-type OwnerResponse {
-  id: UUID!
-  name: String!
+  addDocument(request: AddDocumentRequest!): DocumentResponse!
 }
 
 type Query {
-  listOwners(request: ListOwnersRequest!): ListOwnersResponse!
+  listDocuments(request: ListDocumentsRequest!): ListDocumentsResponse!
 }
 
 # A UUID is a unique 128-bit number, stored as 16 octets. UUIDs are parsed as Strings

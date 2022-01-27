@@ -1,5 +1,5 @@
+use docstore_adapter_1ry_gql::api::{AddDocumentRequest, DocumentResponse, ListDocumentsRequest};
 use graphql_client::{reqwest::post_graphql, GraphQLQuery};
-use docstore_adapter_1ry_gql::api::{AddDocumentRequest, ListDocumentsRequest, DocumentResponse};
 use snafu::{ResultExt, Snafu};
 use url::Url;
 use uuid::Uuid;
@@ -84,7 +84,10 @@ impl From<add_document::AddDocumentAdddocument> for DocumentResponse {
 }
 
 // This function sends a request to a GraphQL API to add a new document.
-pub async fn add_document(url: Url, request: AddDocumentRequest) -> Result<documentResponse, Error> {
+pub async fn add_document(
+    url: Url,
+    request: AddDocumentRequest,
+) -> Result<documentResponse, Error> {
     let AddDocumentRequest { name } = request;
     let request = add_document::AddDocumentRequest { name };
     let variables = add_document::Variables { request };
