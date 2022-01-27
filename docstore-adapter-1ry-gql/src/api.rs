@@ -48,6 +48,7 @@ impl From<ListDocumentsRequest> for model::document::ListDocumentsRequest {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct DocumentResponse {
     pub id: Uuid,
     pub title: String,
@@ -84,6 +85,15 @@ impl DocumentResponse {
     async fn genre(&self) -> &String {
         &self.genre
     }
+
+    async fn created_at(&self) -> &DateTime<Utc> {
+        &self.created_at
+    }
+
+    async fn updated_at(&self) -> &DateTime<Utc> {
+        &self.updated_at
+    }
+
 }
 
 impl From<Document> for DocumentResponse {

@@ -7,6 +7,11 @@ input AddDocumentRequest {
   genre: String!
 }
 
+# Implement the DateTime<Utc> scalar
+#
+# The input/output is a string in RFC3339 format.
+scalar DateTime
+
 type DocumentResponse {
   id: UUID!
   title: String!
@@ -14,6 +19,8 @@ type DocumentResponse {
   content: String!
   tags: [String!]!
   genre: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 input ListDocumentsRequest {

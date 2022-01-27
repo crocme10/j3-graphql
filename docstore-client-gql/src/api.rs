@@ -9,8 +9,8 @@ use uuid::Uuid;
 
 use petstore_domain::model;
 use petstore_domain::model::error::Error as ModelError;
-use petstore_domain::model::owner::Owner;
-use petstore_domain::ports::primary::storage::OwnerStorage;
+use petstore_domain::model::document::Document;
+use petstore_domain::ports::primary::storage::DocumentStorage;
 
 #[derive(Debug, Snafu)]
 pub enum Error {
@@ -33,24 +33,24 @@ impl ErrorExtensions for Error {
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "../graphql/schema.gql",
-    query_path = "../graphql/list_owners.gql"
+    query_path = "../graphql/list_documents.gql"
 )]
-struct ListOwners;
+struct ListDocuments;
 
 #[allow(clippy::upper_case_acronyms)]
 type UUID = Uuid;
 
-// This function sends a request to a GraphQL API to obtain a list of Owners.
-pub async fn list_owners(
+// This function sends a request to a GraphQL API to obtain a list of Documents.
+pub async fn list_documents(
     url: Url,
-    request: ListOwnersRequest,
-) -> Result<Vec<OwnerResponse>, Error> {
-    let ListOwnersRequest { offset, limit } = request;
-    let request = list_owners::ListOwnersRequest {
+    request: ListDocumentsRequest,
+) -> Result<Vec<DocumentResponse>, Error> {
+    let ListDocumentsRequest { offset, limit } = request;
+    let request = list_documents::ListDocumentsRequest {
         offset: offset.into(),
         limit: limit.into(),
     };
-    let variables = list_owners::Variables { request };
+    let variables = list_documents::Variables { request };
     let mut headers = reqwest::header::HeaderMap::new();
     headers.insert(
         "Accept-Encoding",
@@ -68,46 +68,51 @@ pub async fn list_owners(
         .default_headers(headers)
         .build()
         .context(Reqwest {
-            msg: "Cannot request list owners",
+            msg: "Cannot request list documents",
         })?;
 
-    let response = post_graphql::<ListOwners, _>(&client, url, variables)
+    let response = post_graphql::<ListDocuments, _>(&client, url, variables)
         .await
         .context(Reqwest { msg: "Foo" })?;
-    let response_data: list_owners::ResponseData = response.data.expect("response data");
-    let owners: Vec<OwnerResponse> = response_data
-        .list_owners
-        .owners
+    let response_data: list_documents::ResponseData = response.data.expect("response data");
+    let documents: Vec<DocumentResponse> = response_data
+        .list_documents
+        .documents
         .into_iter()
-        .map(|o| OwnerResponse {
+        .map(|o| DocumentResponse {
             id: o.id,
             name: o.name,
         })
         .collect();
-    Ok(owners)
+    Ok(documents)
 }
 
 #[derive(GraphQLQuery)]
 #[graphql(
     schema_path = "../graphql/schema.gql",
-    query_path = "../graphql/add_owner.gql"
+    query_path = "../graphql/add_document.gql"
 )]
-struct AddOwner;
+struct AddDocument;
 
-impl From<add_owner::AddOwnerAddOwner> for OwnerResponse {
-    fn from(add_owner: add_owner::AddOwnerAddOwner) -> OwnerResponse {
-        OwnerResponse {
-            id: add_owner.id,
-            name: add_owner.name,
+impl From<add_document::AddDocumentAddDocument> for DocumentResponse {
+    fn from(add_document: add_document::AddDocumentAddDocument) -> DocumentResponse {
+        DocumentResponse {
+            id: add_document.id,
+            title: add_document.title,
+            outline: add_document.outline,
+            content: add_document.content,
+            tags: add_document.tags,
+            created_at: add_document.created_at,
+            updated_at: add_document.updated_at
         }
     }
 }
 
-// This function sends a request to a GraphQL API to add a new owner.
-pub async fn add_owner(url: Url, request: AddOwnerRequest) -> Result<OwnerResponse, Error> {
-    let AddOwnerRequest { name } = request;
-    let request = add_owner::AddOwnerRequest { name };
-    let variables = add_owner::Variables { request };
+// This function sends a request to a GraphQL API to add a new document.
+pub async fn add_document(url: Url, request: AddDocumentRequest) -> Result<DocumentResponse, Error> {
+    let AddDocumentRequest { name } = request;
+    let request = add_document::AddDocumentRequest { name };
+    let variables = add_document::Variables { request };
     let mut headers = reqwest::header::HeaderMap::new();
     headers.insert(
         "Accept-Encoding",
@@ -125,13 +130,13 @@ pub async fn add_owner(url: Url, request: AddOwnerRequest) -> Result<OwnerRespon
         .default_headers(headers)
         .build()
         .context(Reqwest {
-            msg: "Cannot request list owners",
+            msg: "Cannot request list documents",
         })?;
 
-    let response = post_graphql::<AddOwner, _>(&client, url, variables)
+    let response = post_graphql::<AddDocument, _>(&client, url, variables)
         .await
         .context(Reqwest { msg: "Foo" })?;
-    let response_data: add_owner::ResponseData = response.data.expect("response data");
-    let owner = OwnerResponse::from(response_data.add_owner);
-    Ok(owner)
+    let response_data: add_document::ResponseData = response.data.expect("response data");
+    let document = DocumentResponse::from(response_data.add_document);
+    Ok(document)
 }

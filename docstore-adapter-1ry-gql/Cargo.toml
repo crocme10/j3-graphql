@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 async-trait = "0.1.50"
-async-graphql = { version = "3.0.20", features = [ "tracing", "uuid" ] }
+async-graphql = { version = "3.0.20", features = [ "tracing", "uuid", "chrono" ] }
 futures = { version = "0.3.18", optional = true }
 http = "0.2"
 docstore-domain = { path = "../docstore-domain" }

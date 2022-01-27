@@ -61,7 +61,13 @@ pub async fn list_documents(
         .into_iter()
         .map(|o| DocumentResponse {
             id: o.id,
-            name: o.name,
+            title: o.title,
+            outline: o.outline,
+            content: o.content,
+            tags: o.tags,
+            genre: o.genre,
+            created_at: o.created_at,
+            updated_at: o.updated_at
         })
         .collect();
     Ok(documents)
@@ -74,11 +80,17 @@ pub async fn list_documents(
 )]
 struct AddDocument;
 
-impl From<add_document::AddDocumentAdddocument> for DocumentResponse {
+impl From<add_document::AddDocumentAddDocument> for DocumentResponse {
     fn from(add_document: add_document::AddDocumentAddDocument) -> DocumentResponse {
         DocumentResponse {
             id: add_document.id,
-            name: add_document.name,
+            title: add_document.title,
+            outline: add_document.outline,
+            content: add_document.content,
+            tags: add_document.tags,
+            genre: add_document.genre,
+            created_at: add_document.created_at,
+            updated_at: add_document.updated_at
         }
     }
 }
@@ -87,9 +99,9 @@ impl From<add_document::AddDocumentAdddocument> for DocumentResponse {
 pub async fn add_document(
     url: Url,
     request: AddDocumentRequest,
-) -> Result<documentResponse, Error> {
-    let AddDocumentRequest { name } = request;
-    let request = add_document::AddDocumentRequest { name };
+) -> Result<DocumentResponse, Error> {
+    let AddDocumentRequest { id, title, outline, content, tags, genre } = request;
+    let request = add_document::AddDocumentRequest { id, title, outline, content, tags, genre };
     let variables = add_document::Variables { request };
     let mut headers = reqwest::header::HeaderMap::new();
     headers.insert(
