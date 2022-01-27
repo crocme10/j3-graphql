@@ -67,7 +67,7 @@ pub async fn list_documents(
             tags: o.tags,
             genre: o.genre,
             created_at: o.created_at,
-            updated_at: o.updated_at
+            updated_at: o.updated_at,
         })
         .collect();
     Ok(documents)
@@ -90,7 +90,7 @@ impl From<add_document::AddDocumentAddDocument> for DocumentResponse {
             tags: add_document.tags,
             genre: add_document.genre,
             created_at: add_document.created_at,
-            updated_at: add_document.updated_at
+            updated_at: add_document.updated_at,
         }
     }
 }
@@ -100,8 +100,22 @@ pub async fn add_document(
     url: Url,
     request: AddDocumentRequest,
 ) -> Result<DocumentResponse, Error> {
-    let AddDocumentRequest { id, title, outline, content, tags, genre } = request;
-    let request = add_document::AddDocumentRequest { id, title, outline, content, tags, genre };
+    let AddDocumentRequest {
+        id,
+        title,
+        outline,
+        content,
+        tags,
+        genre,
+    } = request;
+    let request = add_document::AddDocumentRequest {
+        id,
+        title,
+        outline,
+        content,
+        tags,
+        genre,
+    };
     let variables = add_document::Variables { request };
     let mut headers = reqwest::header::HeaderMap::new();
     headers.insert(

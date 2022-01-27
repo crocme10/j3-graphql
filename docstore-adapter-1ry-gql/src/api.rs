@@ -93,7 +93,6 @@ impl DocumentResponse {
     async fn updated_at(&self) -> &DateTime<Utc> {
         &self.updated_at
     }
-
 }
 
 impl From<Document> for DocumentResponse {
