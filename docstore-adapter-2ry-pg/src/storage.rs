@@ -47,14 +47,14 @@ impl From<&Genre> for GenreEntity {
 
 // impl std::str::FromStr for  GenreEntity {
 //     type Err = ();
-// 
+//
 //     fn from_str(input: &str) -> Result<GenreEntity, Self::Err> {
 //         match input {
-//             "tutorial" => Ok(GenreEntity::Tutorial), 
-//             "howto" => Ok(GenreEntity::Howto), 
-//             "background" => Ok(GenreEntity::Background), 
-//             "reference" => Ok(GenreEntity::Reference), 
-//             _ => Ok(GenreEntity::Tbd), 
+//             "tutorial" => Ok(GenreEntity::Tutorial),
+//             "howto" => Ok(GenreEntity::Howto),
+//             "background" => Ok(GenreEntity::Background),
+//             "reference" => Ok(GenreEntity::Reference),
+//             _ => Ok(GenreEntity::Tbd),
 //         }
 //     }
 // }

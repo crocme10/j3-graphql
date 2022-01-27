@@ -9,8 +9,8 @@ use bollard::{
     image::CreateImageOptions,
     Docker,
 };
-use futures::stream::TryStreamExt;
 use docstore_domain::ports::secondary::remote::Error as RemoteError;
+use futures::stream::TryStreamExt;
 use serde::{Deserialize, Serialize};
 use snafu::{ResultExt, Snafu};
 use std::collections::HashMap;
