@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+
+  db:
+    build:
+      context: ../db
+      dockerfile: ../db/docker/Dockerfile
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=bob
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=petstore
+
+  backend:
+    build:
+      context: ../petstore/petstore-server-gql
+      dockerfile: ../docker/server-gql/Dockerfile
+    ports:
+      - 5050:5050
+    depends_on:
+      - db
+    environment:
+      - GQL_POSTGRESQL_URL=postgres://bob:secret@db:5432/petstore

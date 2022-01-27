@@ -1,0 +1,9 @@
+query ListOwners($request: ListOwnersRequest!) {
+  listOwners(request: $request) {
+    owners {
+      id,
+      name
+    },
+    count
+  }
+}

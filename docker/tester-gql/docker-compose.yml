@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+
+  tester:
+    image: gitlab.area403.org:5050/petstore/petstore/tester-gql:latest
+    depends_on:
+      - server
+    environment:
+      - TEST_GRAPHQL_URL=http://server:5050
+
+  db:
+    image: gitlab.area403.org:5050/petstore/db:main
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=bob
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=petstore
+
+  server:
+    image: gitlab.area403.org:5050/petstore/petstore/server-gql:latest
+    ports:
+      - 5050:5050
+    depends_on:
+      - db
+    environment:
+      - GQL_POSTGRESQL_URL=postgres://bob:secret@db:5432/petstore

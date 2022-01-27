@@ -1,0 +1,23 @@
+[package]
+name = "docstore-adapter-2ry-pg"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-trait = "0.1.50"
+bollard = { version = "0.11.0" }
+chrono = { version = "0.4", features = [ "serde" ] }
+config = { version = "0.11", default_features = false, features = ["json", "toml"] }
+futures = { version = "0.3.18" }
+docstore-domain = { path = "../docstore-domain" }
+semver = { version = "1.0.0" }
+serde_json = "1"
+serde = {version = "=1.0.130", features = ["derive"] }
+snafu = { version = "0.6.10", features = [ "futures" ] }
+sqlx = { version = "0.5.9", default-features = false, features = [ "postgres", "runtime-tokio-native-tls", "chrono", "uuid", "macros" ] }
+tokio = { version = "1.14.0", features = ["macros", "rt-multi-thread"] }
+tracing = "0.1.26"
+url = { version = "2.2", features = [ "serde" ] }
+uuid = { version = "0.8", features = ["serde", "v4"] }

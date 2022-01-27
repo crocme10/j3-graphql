@@ -1,0 +1,37 @@
+[docker]
+  # Timeout for calls to docker engine (ms)
+  timeout = 5000
+
+  # Duration to wait after container creation (ms)
+  container_wait = 5000
+
+  # Duration to wait for container to be available (ms)
+  container_available = 30000
+
+  # Duration to wait after container has been stopped and removed (ms)
+  container_cleanup = 5
+
+  [docker.container]
+    # Docker image
+    image = "gitlab.area403.org:5050/petstore/db:main"
+
+    # Name of the container
+    name = "wasm"
+
+    # Memory usage allocated by the docker engine (Mb)
+    memory = 4096
+
+    # List of environment variables passed to the docker engine for
+    # the creation of the image
+    vars = ["POSTGRES_PASSWORD=secret", "POSTGRES_DB=petstore"]
+
+  [docker.version]
+    major = 1
+    minor = 24
+
+
+  [docker.registry.credentials]
+    # These need to be filled by real values, typically in 'local.toml' file which is
+    # ignored by git, or they need to be given as environment variables.
+    username = "na"
+    password = "na"

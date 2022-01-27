@@ -1,0 +1,86 @@
+ARG RUST_VERSION="1.56"
+ARG DEBIAN_VERSION="buster"
+
+FROM rust:${RUST_VERSION}-${DEBIAN_VERSION} as builder
+
+WORKDIR /home
+
+ENV DEBIAN_FRONTEND noninteractive
+
+ARG DEBIAN_VERSION
+
+RUN if [ "${DEBIAN_VERSION}" = "buster" ]; then \
+  apt-get update \
+    && apt-get install -y libssl-dev git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*; \
+elif [ "${DEBIAN_VERSION}" = "stretch" ]; then \
+  apt-get update \
+    && apt-get install -y libssl1.0-dev git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*; \
+else \
+  echo "Unsupported debian version '$DEBIAN_VERSION'"; \
+fi
+
+RUN USER=root cargo new petstore
+
+WORKDIR /home/petstore
+
+COPY ./Cargo.toml ./Cargo.toml
+COPY ./Cargo.lock ./Cargo.lock
+COPY ./src ./src
+COPY ./config ./config
+COPY ./docker ./docker
+# COPY ./graphql ./graphql
+# COPY ./tests ./tests
+
+# FIXME Why is RUN --mount ... not working
+# RUN --mount=type=cache,target=/usr/local/cargo/registry \
+#     --mount=type=cache,target=/home/petstore/target  \
+#     cargo build --release --locked
+
+RUN cargo build --release --locked
+
+# Extract binary from build cache
+RUN mkdir bin
+
+# FIXME Why is RUN --mount ... not working
+# RUN --mount=type=cache,target=/home/petstore/target \
+#    cp target/petstore/gql bin/
+RUN cp target/release/gql bin/
+
+ARG DEBIAN_VERSION
+
+FROM debian:${DEBIAN_VERSION}-slim
+
+WORKDIR /srv
+
+ENV DEBIAN_FRONTEND noninteractive
+
+ARG DEBIAN_VERSION
+
+RUN if [ "${DEBIAN_VERSION}" = "buster" ]; then \
+  apt-get update \
+    && apt-get install -y libssl-dev git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*; \
+elif [ "${DEBIAN_VERSION}" = "stretch" ]; then \
+  apt-get update \
+    && apt-get install -y libssl1.0-dev git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*; \
+else \
+  echo "Unsupported debian version '$DEBIAN_VERSION'"; \
+fi
+
+
+COPY config /srv/petstore/etc/gql
+COPY --from=builder /home/petstore/bin/gql /srv/petstore/bin/gql
+
+EXPOSE 4000
+
+ENV CONFIG_DIR  /srv/petstore/etc/gql
+ENV RUST_LOG    info,hyper=info
+
+ENTRYPOINT [ "/srv/petstore/bin/gql", "--config-dir", "/srv/petstore/etc/gql", "--run-mode", "docker", "run" ]

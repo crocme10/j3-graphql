@@ -1,0 +1,47 @@
+[workspace]
+members = [
+  "docstore-domain",
+  "docstore-adapter-1ry-gql",
+  "docstore-adapter-2ry-pg",
+  "docstore-server-gql",
+  "docstore-client-gql",
+]
+
+[package]
+name = "docstore"
+version = "0.1.0"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/crocme10/docstore"
+description = "A docstore as a project template for hexagonal archicture / wasm / webapp"
+edition = "2021"
+keywords = ["webapp", "hexagonal", "wasm"]
+categories = [ "web" ]
+authors = [
+  "Matthieu Paindavoine <matt@area403.org>",
+]
+
+[features]
+default = [ "postgres", "graphql" ]
+postgres = [ "docstore-adapter-2ry-pg" ]
+graphql = [ "docstore-adapter-1ry-gql", "docstore-client-gql" ]
+
+[dependencies]
+docstore-adapter-1ry-gql = { path = "docstore-adapter-1ry-gql", optional = true }
+docstore-adapter-2ry-pg = { path = "docstore-adapter-2ry-pg", optional = true }
+docstore-client-gql = { path = "docstore-client-gql", optional = true }
+
+[dev-dependencies]
+async-trait = "0.1.50"
+cucumber = "0.10"
+lazy_static = "1.4"
+tokio = { version = "1.14.0", features = ["macros", "rt-multi-thread"] }
+url = { version = "2.2", features = [ "serde" ] }
+snafu = { version = "0.6.10", features = [ "futures" ] }
+
+[[test]]
+name = "e2e"
+path = "tests/e2e.rs"
+required-features= ["postgres", "graphql"]
+harness = false
+test = false

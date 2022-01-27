@@ -1,0 +1,6 @@
+mutation AddOwner($request: AddOwnerRequest!) {
+  addOwner(request: $request) {
+    id,
+    name
+  }
+}
