@@ -54,6 +54,7 @@ pub struct DocumentResponse {
     pub title: String,
     pub outline: String,
     pub content: String,
+    pub html: String,
     pub tags: Vec<String>,
     pub genre: String,
     pub created_at: DateTime<Utc>,
@@ -76,6 +77,10 @@ impl DocumentResponse {
 
     async fn content(&self) -> &String {
         &self.content
+    }
+
+    async fn html(&self) -> &String {
+        &self.html
     }
 
     async fn tags(&self) -> &Vec<String> {
@@ -102,6 +107,7 @@ impl From<Document> for DocumentResponse {
             title,
             outline,
             content,
+            html,
             tags,
             genre,
             created_at,
@@ -113,6 +119,7 @@ impl From<Document> for DocumentResponse {
             title,
             outline,
             content,
+            html,
             tags,
             genre: genre.as_str().to_string(),
             created_at,
@@ -174,12 +181,13 @@ pub struct Mutation;
 
 #[derive(Serialize, Deserialize, Debug, InputObject)]
 pub struct AddDocumentRequest {
-    id: Uuid,
-    title: String,
-    outline: String,
-    content: String,
-    tags: Vec<String>,
-    genre: String,
+    pub id: Uuid,
+    pub title: String,
+    pub outline: String,
+    pub content: String,
+    pub html: String,
+    pub tags: Vec<String>,
+    pub genre: String,
 }
 
 impl From<AddDocumentRequest> for model::document::AddDocumentRequest {
@@ -189,6 +197,7 @@ impl From<AddDocumentRequest> for model::document::AddDocumentRequest {
             title,
             outline,
             content,
+            html,
             tags,
             genre,
         } = request;
@@ -197,6 +206,7 @@ impl From<AddDocumentRequest> for model::document::AddDocumentRequest {
             title,
             outline,
             content,
+            html,
             tags,
             genre: Genre::from_str(&genre).unwrap(),
         }

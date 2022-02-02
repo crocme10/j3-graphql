@@ -49,6 +49,7 @@ pub struct Document {
     #[serde(rename = "abstract")]
     pub outline: String,
     pub content: String,
+    pub html: String,
     pub tags: Vec<String>,
     #[serde(default = "default_genre")]
     pub genre: Genre,
@@ -71,6 +72,7 @@ pub struct AddDocumentRequest {
     #[serde(rename = "abstract")]
     pub outline: String,
     pub content: String,
+    pub html: String,
     pub tags: Vec<String>,
     #[serde(default = "default_genre")]
     pub genre: Genre,

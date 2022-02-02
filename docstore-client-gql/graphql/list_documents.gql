@@ -5,6 +5,7 @@ query ListDocuments($request: ListDocumentsRequest!) {
       title,
       outline,
       content,
+      html,
       tags,
       genre,
       createdAt,

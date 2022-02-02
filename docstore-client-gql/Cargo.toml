@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 graphql_client = { version = "0.10", features = [ "reqwest" ] }
+chrono = "0.4"
 http = "0.2"
 mockall = "0.8.3"
 docstore-adapter-1ry-gql = { path = "../docstore-adapter-1ry-gql" }

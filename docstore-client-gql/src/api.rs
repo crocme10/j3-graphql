@@ -6,6 +6,7 @@ use snafu::{ResultExt, Snafu};
 use tracing::instrument;
 use url::Url;
 use uuid::Uuid;
+use chrono::{DateTime, Utc};
 
 use petstore_domain::model;
 use petstore_domain::model::error::Error as ModelError;
@@ -101,6 +102,7 @@ impl From<add_document::AddDocumentAddDocument> for DocumentResponse {
             title: add_document.title,
             outline: add_document.outline,
             content: add_document.content,
+            html: add_document.html,
             tags: add_document.tags,
             created_at: add_document.created_at,
             updated_at: add_document.updated_at

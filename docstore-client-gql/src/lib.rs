@@ -3,6 +3,7 @@ use graphql_client::{reqwest::post_graphql, GraphQLQuery};
 use snafu::{ResultExt, Snafu};
 use url::Url;
 use uuid::Uuid;
+use chrono::{DateTime, Utc};
 
 #[derive(Debug, Snafu)]
 pub enum Error {
@@ -19,6 +20,9 @@ struct ListDocuments;
 
 #[allow(clippy::upper_case_acronyms)]
 type UUID = Uuid;
+
+#[allow(clippy::upper_case_acronyms)]
+type TIMESTAMPZ = DateTime<Utc>;
 
 // This function sends a request to a GraphQL API to obtain a list of Documents.
 pub async fn list_documents(
@@ -64,6 +68,7 @@ pub async fn list_documents(
             title: o.title,
             outline: o.outline,
             content: o.content,
+            html: o.html,
             tags: o.tags,
             genre: o.genre,
             created_at: o.created_at,
@@ -87,6 +92,7 @@ impl From<add_document::AddDocumentAddDocument> for DocumentResponse {
             title: add_document.title,
             outline: add_document.outline,
             content: add_document.content,
+            html: add_document.html,
             tags: add_document.tags,
             genre: add_document.genre,
             created_at: add_document.created_at,
@@ -105,6 +111,7 @@ pub async fn add_document(
         title,
         outline,
         content,
+        html,
         tags,
         genre,
     } = request;
@@ -113,6 +120,7 @@ pub async fn add_document(
         title,
         outline,
         content,
+        html,
         tags,
         genre,
     };

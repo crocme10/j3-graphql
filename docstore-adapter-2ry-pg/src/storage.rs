@@ -45,20 +45,6 @@ impl From<&Genre> for GenreEntity {
     }
 }
 
-// impl std::str::FromStr for  GenreEntity {
-//     type Err = ();
-//
-//     fn from_str(input: &str) -> Result<GenreEntity, Self::Err> {
-//         match input {
-//             "tutorial" => Ok(GenreEntity::Tutorial),
-//             "howto" => Ok(GenreEntity::Howto),
-//             "background" => Ok(GenreEntity::Background),
-//             "reference" => Ok(GenreEntity::Reference),
-//             _ => Ok(GenreEntity::Tbd),
-//         }
-//     }
-// }
-
 // We need a struct to receive the data from sqlx
 // This struct needs to interface with sqlx (so it must implement FromRow)
 // and it must be turned into what the function signature of the port expect (a Document).
@@ -69,6 +55,7 @@ struct DocumentEntity {
     pub title: String,
     pub outline: String,
     pub content: String,
+    pub html: String,
     pub tags: Vec<String>,
     pub genre: GenreEntity,
     pub created_at: DateTime<Utc>,
@@ -82,10 +69,11 @@ impl<'c> FromRow<'c, PgRow> for DocumentEntity {
             title: row.try_get(1)?,
             outline: row.try_get(2)?,
             content: row.try_get(3)?,
-            tags: row.try_get(4)?,
-            genre: row.try_get(5)?,
-            created_at: row.try_get(6)?,
-            updated_at: row.try_get(7)?,
+            html: row.try_get(4)?,
+            tags: row.try_get(5)?,
+            genre: row.try_get(6)?,
+            created_at: row.try_get(7)?,
+            updated_at: row.try_get(8)?,
         })
     }
 }
@@ -97,6 +85,7 @@ impl From<DocumentEntity> for Document {
             title,
             outline,
             content,
+            html,
             tags,
             genre,
             created_at,
@@ -107,6 +96,7 @@ impl From<DocumentEntity> for Document {
             title,
             outline,
             content,
+            html,
             tags,
             genre: Genre::from(genre),
             created_at,
@@ -133,11 +123,12 @@ impl DocumentStorage for PostgresqlStorage {
 
     async fn add_document(&self, request: &AddDocumentRequest) -> Result<Document, Error> {
         let entity: DocumentEntity =
-            sqlx::query_as(r#"SELECT * FROM api.add_document($1::TEXT, $2::TEXT, $3::TEXT, $4::TEXT, $5::TEXT[], $6::main.GENRE)"#)
+            sqlx::query_as(r#"SELECT * FROM api.add_document($1::TEXT, $2::TEXT, $3::TEXT, $4::TEXT, $5::TEXT, $6::TEXT[], $7::main.GENRE)"#)
                 .bind(&request.id)
                 .bind(&request.title)
                 .bind(&request.outline)
                 .bind(&request.content)
+                .bind(&request.html)
                 .bind(&request.tags)
                 .bind(GenreEntity::from(&request.genre))
                 .fetch_one(&*self.pool)

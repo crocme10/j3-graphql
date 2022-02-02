@@ -3,24 +3,26 @@ input AddDocumentRequest {
   title: String!
   outline: String!
   content: String!
+  html: String!
   tags: [String!]!
   genre: String!
 }
 
-# Implement the DateTime<Utc> scalar
+# Implement the <Utc> scalar
 #
 # The input/output is a string in RFC3339 format.
-scalar DateTime
+scalar TIMESTAMPZ
 
 type DocumentResponse {
   id: UUID!
   title: String!
   outline: String!
   content: String!
+  html: String!
   tags: [String!]!
   genre: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: TIMESTAMPZ!
+  updatedAt: TIMESTAMPZ!
 }
 
 input ListDocumentsRequest {

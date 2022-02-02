@@ -4,6 +4,7 @@ mutation AddDocument($request: AddDocumentRequest!) {
     title,
     outline,
     content,
+    html,
     tags,
     genre,
     createdAt,
