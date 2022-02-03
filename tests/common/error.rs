@@ -1,6 +1,6 @@
 use snafu::Snafu;
 
-use petstore_client_gql::Error as APIError;
+use docstore_client_gql::Error as APIError;
 
 #[derive(Debug, Snafu)]
 #[snafu(visibility = "pub(crate)")]

@@ -1,0 +1,15 @@
+query GetDocument($request: GetDocumentRequest!) {
+  getDocument(request: $request) {
+    document {
+      id,
+      title,
+      outline,
+      content,
+      html,
+      tags,
+      genre,
+      createdAt,
+      updatedAt
+    }
+  }
+}

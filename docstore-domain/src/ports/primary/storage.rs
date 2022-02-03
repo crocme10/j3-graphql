@@ -1,12 +1,15 @@
 use async_trait::async_trait;
 
-use crate::model::document::{AddDocumentRequest, Document, ListDocumentsRequest};
+use crate::model::document::{
+    AddDocumentRequest, Document, GetDocumentRequest, ListDocumentsRequest,
+};
 use crate::model::error::Error;
 
 #[async_trait]
 pub trait DocumentStorage {
     async fn list_documents(&self, request: &ListDocumentsRequest) -> Result<Vec<Document>, Error>;
     async fn add_document(&self, request: &AddDocumentRequest) -> Result<Document, Error>;
+    async fn get_document(&self, request: &GetDocumentRequest) -> Result<Document, Error>;
 }
 
 #[async_trait]
@@ -19,5 +22,8 @@ where
     }
     async fn add_document(&self, request: &AddDocumentRequest) -> Result<Document, Error> {
         self.add_document(request).await
+    }
+    async fn get_document(&self, request: &GetDocumentRequest) -> Result<Document, Error> {
+        self.get_document(request).await
     }
 }

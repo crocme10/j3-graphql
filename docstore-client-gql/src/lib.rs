@@ -1,5 +1,7 @@
 use chrono::{DateTime, Utc};
-use docstore_adapter_1ry_gql::api::{AddDocumentRequest, DocumentResponse, ListDocumentsRequest};
+use docstore_adapter_1ry_gql::api::{
+    AddDocumentRequest, DocumentResponse, GetDocumentRequest, ListDocumentsRequest,
+};
 use graphql_client::{reqwest::post_graphql, GraphQLQuery};
 use snafu::{ResultExt, Snafu};
 use url::Url;
@@ -76,6 +78,59 @@ pub async fn list_documents(
         })
         .collect();
     Ok(documents)
+}
+
+#[derive(GraphQLQuery)]
+#[graphql(
+    schema_path = "graphql/schema.gql",
+    query_path = "graphql/get_document.gql"
+)]
+struct GetDocument;
+
+// This function sends a request to a GraphQL API to obtain a Document based on its id.
+pub async fn get_document(
+    url: &Url,
+    request: GetDocumentRequest,
+) -> Result<DocumentResponse, Error> {
+    let GetDocumentRequest { id } = request;
+    let request = get_document::GetDocumentRequest { id: id.into() };
+    let variables = get_document::Variables { request };
+    let mut headers = reqwest::header::HeaderMap::new();
+    headers.insert(
+        "Accept-Encoding",
+        reqwest::header::HeaderValue::from_static("gzip, deflate, br"),
+    );
+    headers.insert(
+        "Content-Type",
+        reqwest::header::HeaderValue::from_static("application/json"),
+    );
+    headers.insert(
+        "Accept",
+        reqwest::header::HeaderValue::from_static("application/json"),
+    );
+    let client = reqwest::Client::builder()
+        .default_headers(headers)
+        .build()
+        .context(Reqwest {
+            msg: "Cannot request get document",
+        })?;
+
+    let response = post_graphql::<GetDocument, _>(&client, url.to_owned(), variables)
+        .await
+        .context(Reqwest { msg: "Foo" })?;
+    let response_data: get_document::ResponseData = response.data.expect("response data");
+    let doc = response_data.get_document.document;
+    Ok(DocumentResponse {
+        id: doc.id,
+        title: doc.title,
+        outline: doc.outline,
+        content: doc.content,
+        html: doc.html,
+        tags: doc.tags,
+        genre: doc.genre,
+        created_at: doc.created_at,
+        updated_at: doc.updated_at,
+    })
 }
 
 #[derive(GraphQLQuery)]

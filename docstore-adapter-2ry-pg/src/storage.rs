@@ -6,7 +6,9 @@ use uuid::Uuid;
 
 use super::Error as PostgresError;
 use super::PostgresqlStorage;
-use docstore_domain::model::document::{AddDocumentRequest, Document, Genre, ListDocumentsRequest};
+use docstore_domain::model::document::{
+    AddDocumentRequest, Document, Genre, GetDocumentRequest, ListDocumentsRequest,
+};
 use docstore_domain::model::error::Error;
 use docstore_domain::ports::secondary::storage::DocumentStorage;
 
@@ -135,5 +137,18 @@ impl DocumentStorage for PostgresqlStorage {
                 .await
                 .map_err(PostgresError::from)?;
         Ok(Document::from(entity))
+    }
+
+    async fn get_document(&self, request: &GetDocumentRequest) -> Result<Document, Error> {
+        let entity: DocumentEntity =
+            sqlx::query_as(r#"SELECT * FROM api.get_document_by_id($1::UUID)"#)
+                .bind(&request.id)
+                .fetch_one(&*self.pool)
+                .await
+                .map_err(PostgresError::from)?;
+
+        let document = Document::from(entity);
+
+        Ok(document)
     }
 }

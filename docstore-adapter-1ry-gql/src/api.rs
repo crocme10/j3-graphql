@@ -47,6 +47,19 @@ impl From<ListDocumentsRequest> for model::document::ListDocumentsRequest {
     }
 }
 
+// A GraphQL Input Object to encapsulate the request parameters to get a document.
+#[derive(Serialize, Deserialize, Debug, InputObject)]
+pub struct GetDocumentRequest {
+    pub id: Uuid,
+}
+
+impl From<GetDocumentRequest> for model::document::GetDocumentRequest {
+    fn from(request: GetDocumentRequest) -> Self {
+        let GetDocumentRequest { id } = request;
+        model::document::GetDocumentRequest { id }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct DocumentResponse {
@@ -156,6 +169,26 @@ impl From<Vec<Document>> for ListDocumentsResponse {
     }
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct GetDocumentResponse {
+    pub document: DocumentResponse,
+}
+
+#[Object]
+impl GetDocumentResponse {
+    async fn document(&self) -> &DocumentResponse {
+        &self.document
+    }
+}
+
+impl From<Document> for GetDocumentResponse {
+    fn from(document: Document) -> Self {
+        GetDocumentResponse {
+            document: DocumentResponse::from(document),
+        }
+    }
+}
+
 pub struct Query;
 
 #[Object]
@@ -174,6 +207,22 @@ impl Query {
             })
             .map_err(|e| e.extend())?;
         Ok(ListDocumentsResponse::from(documents))
+    }
+
+    async fn get_document(
+        &self,
+        context: &Context<'_>,
+        request: GetDocumentRequest,
+    ) -> async_graphql::Result<GetDocumentResponse> {
+        let service = get_service_from_context(context)?;
+        let document = service
+            .get_document(&model::document::GetDocumentRequest::from(request))
+            .await
+            .context(Model {
+                msg: "Error Getting Document",
+            })
+            .map_err(|e| e.extend())?;
+        Ok(GetDocumentResponse::from(document))
     }
 }
 

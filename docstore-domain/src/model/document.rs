@@ -41,7 +41,6 @@ impl std::str::FromStr for Genre {
     }
 }
 
-// This must match the type returned by the db api/owner_type
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Document {
     pub id: Uuid,
@@ -57,14 +56,12 @@ pub struct Document {
     pub updated_at: DateTime<Utc>,
 }
 
-// This type is an input type (to create an owner)
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ListDocumentsRequest {
     pub offset: u32,
     pub limit: u32,
 }
 
-// This type is an input type (to create an owner)
 #[derive(Serialize, Deserialize, Debug)]
 pub struct AddDocumentRequest {
     pub id: Uuid,
@@ -76,4 +73,9 @@ pub struct AddDocumentRequest {
     pub tags: Vec<String>,
     #[serde(default = "default_genre")]
     pub genre: Genre,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct GetDocumentRequest {
+    pub id: Uuid,
 }
