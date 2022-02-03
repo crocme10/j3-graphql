@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use docstore_adapter_1ry_gql::api::{
+pub use docstore_adapter_1ry_gql::api::{
     AddDocumentRequest, DocumentResponse, GetDocumentRequest, ListDocumentsRequest,
 };
 use graphql_client::{reqwest::post_graphql, GraphQLQuery};

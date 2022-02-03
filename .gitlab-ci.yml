@@ -34,22 +34,22 @@ build:
     - export RUST_VERSION=$(cat rust-toolchain)
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build --pull --tag $CI_REGISTRY_IMAGE/server-gql:latest -f docker/server-gql/Dockerfile --build-arg RUST_VERSION=$RUST_VERSION .
-    - docker push $CI_REGISTRY_IMAGE/server-gql:latest
-    - docker build --pull --tag $CI_REGISTRY_IMAGE/tester-gql:latest -f docker/tester-gql/Dockerfile --build-arg RUST_VERSION=$RUST_VERSION .
-    - docker push $CI_REGISTRY_IMAGE/tester-gql:latest
+#    - docker push $CI_REGISTRY_IMAGE/server-gql:latest
+#    - docker build --pull --tag $CI_REGISTRY_IMAGE/tester-gql:latest -f docker/tester-gql/Dockerfile --build-arg RUST_VERSION=$RUST_VERSION .
+#    - docker push $CI_REGISTRY_IMAGE/tester-gql:latest
 
-integration:
-  stage: integration
-  image: docker:20.10.12
-  services:
-    - docker:20.10.12-dind
-  script:
-    - apk --no-cache add curl
-    - mkdir -p ~/.docker/cli-plugins/
-    - curl -SL https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
-    - chmod +x ~/.docker/cli-plugins/docker-compose
-    - docker version
-    - docker compose version
-    - docker compose -f docker/tester-gql/docker-compose.yml up --exit-code-from tester
+# integration:
+#   stage: integration
+#   image: docker:20.10.12
+#   services:
+#     - docker:20.10.12-dind
+#   script:
+#     - apk --no-cache add curl
+#     - mkdir -p ~/.docker/cli-plugins/
+#     - curl -SL https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-linux-x86_64 -o ~/.docker/cli-plugins/docker-compose
+#     - chmod +x ~/.docker/cli-plugins/docker-compose
+#     - docker version
+#     - docker compose version
+#     - docker compose -f docker/tester-gql/docker-compose.yml up --exit-code-from tester
 
 
