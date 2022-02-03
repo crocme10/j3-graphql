@@ -123,7 +123,7 @@ impl DocumentStorage for PostgresqlStorage {
 
     async fn add_document(&self, request: &AddDocumentRequest) -> Result<Document, Error> {
         let entity: DocumentEntity =
-            sqlx::query_as(r#"SELECT * FROM api.add_document($1::TEXT, $2::TEXT, $3::TEXT, $4::TEXT, $5::TEXT, $6::TEXT[], $7::main.GENRE)"#)
+            sqlx::query_as(r#"SELECT * FROM api.add_document($1::UUID, $2::TEXT, $3::TEXT, $4::TEXT, $5::TEXT, $6::TEXT[], $7::main.GENRE)"#)
                 .bind(&request.id)
                 .bind(&request.title)
                 .bind(&request.outline)

@@ -1,9 +1,9 @@
+use chrono::{DateTime, Utc};
 use docstore_adapter_1ry_gql::api::{AddDocumentRequest, DocumentResponse, ListDocumentsRequest};
 use graphql_client::{reqwest::post_graphql, GraphQLQuery};
 use snafu::{ResultExt, Snafu};
 use url::Url;
 use uuid::Uuid;
-use chrono::{DateTime, Utc};
 
 #[derive(Debug, Snafu)]
 pub enum Error {
@@ -26,7 +26,7 @@ type TIMESTAMPZ = DateTime<Utc>;
 
 // This function sends a request to a GraphQL API to obtain a list of Documents.
 pub async fn list_documents(
-    url: Url,
+    url: &Url,
     request: ListDocumentsRequest,
 ) -> Result<Vec<DocumentResponse>, Error> {
     let ListDocumentsRequest { offset, limit } = request;
@@ -55,7 +55,7 @@ pub async fn list_documents(
             msg: "Cannot request list documents",
         })?;
 
-    let response = post_graphql::<ListDocuments, _>(&client, url, variables)
+    let response = post_graphql::<ListDocuments, _>(&client, url.to_owned(), variables)
         .await
         .context(Reqwest { msg: "Foo" })?;
     let response_data: list_documents::ResponseData = response.data.expect("response data");
@@ -103,7 +103,7 @@ impl From<add_document::AddDocumentAddDocument> for DocumentResponse {
 
 // This function sends a request to a GraphQL API to add a new document.
 pub async fn add_document(
-    url: Url,
+    url: &Url,
     request: AddDocumentRequest,
 ) -> Result<DocumentResponse, Error> {
     let AddDocumentRequest {
@@ -145,7 +145,7 @@ pub async fn add_document(
             msg: "Cannot request list documents",
         })?;
 
-    let response = post_graphql::<AddDocument, _>(&client, url, variables)
+    let response = post_graphql::<AddDocument, _>(&client, url.to_owned(), variables)
         .await
         .context(Reqwest { msg: "Foo" })?;
     let response_data: add_document::ResponseData = response.data.expect("response data");
