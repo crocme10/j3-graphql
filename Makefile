@@ -56,8 +56,8 @@ docker-build:
 	  TAGS=$$TAGS" --tag $(DOCKER_REPO)$(DOCKER_IMG):$$DOCKER_TAG"; \
 	done; \
 	TAGS=$$TAGS" --tag $(DOCKER_REPO)$(DOCKER_IMG):latest"; \
-	echo "docker build $(DOCKER_BUILD_ARGS) $$ARG_DEB $$ARG_RST $$TAGS -f docker/Dockerfile ."; \
-	docker build $(DOCKER_BUILD_ARGS) $$ARG_DEB $$ARG_RST $$TAGS -f docker/Dockerfile .
+	echo "docker build $(DOCKER_BUILD_ARGS) $$ARG_DEB $$ARG_RST $$TAGS -f $(DOCKER_FILE_PATH) $(DOCKER_BUILD_CONTEXT)"; \
+	docker build $(DOCKER_BUILD_ARGS) $$ARG_DEB $$ARG_RST $$TAGS -f $(DOCKER_FILE_PATH) $(DOCKER_BUILD_CONTEXT)
 
 release: check-status check-release build push
 
