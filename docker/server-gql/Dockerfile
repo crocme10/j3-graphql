@@ -82,9 +82,8 @@ fi
 COPY ./docstore-server-gql/config /srv/docstore/etc/gql
 COPY --from=builder /home/docstore-server-gql/bin/gql /srv/docstore/bin/gql
 
+ENTRYPOINT ["entrypoint.sh"]
+
 EXPOSE 4000
 
-ENV CONFIG_DIR  /srv/docstore/etc/gql
-ENV RUST_LOG    info,hyper=info
-
-ENTRYPOINT [ "/srv/docstore/bin/gql", "--config-dir", "/srv/docstore/etc/gql", "--run-mode", "docker", "run" ]
+ENTRYPOINT [ "run" ]
