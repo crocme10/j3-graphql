@@ -86,4 +86,4 @@ ENTRYPOINT ["entrypoint.sh"]
 
 EXPOSE 4000
 
-ENTRYPOINT [ "run" ]
+CMD [ "run" ]
