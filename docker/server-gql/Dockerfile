@@ -81,10 +81,9 @@ fi
 
 COPY ./docstore-server-gql/config /srv/docstore/etc/gql
 COPY docker/server-gql/entrypoint.sh /srv/docstore/bin/
-RUN ln -s /srv/docstore/bin/entrypoint.sh /
 COPY --from=builder /home/docstore-server-gql/bin/gql /srv/docstore/bin/gql
 
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["/srv/docstore/bin/entrypoint.sh"]
 
 EXPOSE 4000
 
