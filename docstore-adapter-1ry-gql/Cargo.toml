@@ -5,6 +5,9 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[features]
+wasm-bindgen = []
+
 [dependencies]
 async-trait = "0.1.50"
 async-graphql = { version = "3.0.20", features = [ "tracing", "uuid", "chrono" ] }
@@ -21,4 +24,4 @@ tokio = { version = "1.14.0", features = ["macros", "rt-multi-thread"] }
 tracing = "0.1.26"
 tracing-futures = "0.2.5"
 url = { version = "2.2", features = [ "serde" ] }
-uuid = { version = "0.8", features = ["serde", "v4"] }
+uuid = { version = "0.8", features = ["serde", "v4", "wasm-bindgen"] }
