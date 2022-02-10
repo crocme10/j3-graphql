@@ -740,7 +740,6 @@ dependencies = [
  "serde",
  "serde_json",
  "snafu",
- "sqlx",
  "tokio",
  "tracing",
  "tracing-futures",

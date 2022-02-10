@@ -6,11 +6,12 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-wasm-bindgen = []
+default = ["graphql"]
+graphql = ["async-graphql"]
 
 [dependencies]
 async-trait = "0.1.50"
-async-graphql = { version = "3.0.20", features = [ "tracing", "uuid", "chrono" ] }
+async-graphql = { version = "3.0.20", features = [ "tracing", "uuid", "chrono" ], optional = true }
 futures = { version = "0.3.18", optional = true }
 http = "0.2"
 docstore-domain = { path = "../docstore-domain" }
@@ -19,7 +20,6 @@ reqwest = "0.11.8"
 serde_json = "1"
 serde = {version = "=1.0.130", features = ["derive"] }
 snafu = { version = "0.6.10", features = [ "futures" ] }
-sqlx = { version = "0.5.9", default-features = false, features = [ "postgres", "runtime-tokio-native-tls", "chrono", "uuid" ], optional = true }
 tokio = { version = "1.14.0", features = ["macros", "rt-multi-thread"] }
 tracing = "0.1.26"
 tracing-futures = "0.2.5"

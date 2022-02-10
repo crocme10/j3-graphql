@@ -1,13 +1,19 @@
-use async_graphql::extensions::Tracing;
-use async_graphql::{Context, EmptySubscription, ErrorExtensions, InputObject, Object, Schema};
+#[cfg(feature = "graphql")]
+use async_graphql::{
+    extensions::Tracing, Context, EmptySubscription, ErrorExtensions, InputObject, Object, Schema,
+};
 use chrono::{DateTime, Utc};
 use docstore_domain::model;
 use docstore_domain::model::document::{Document, Genre};
 use docstore_domain::model::error::Error as ModelError;
+#[cfg(feature = "graphql")]
 use docstore_domain::ports::primary::storage::DocumentStorage;
 use serde::{Deserialize, Serialize};
-use snafu::{ResultExt, Snafu};
+#[cfg(feature = "graphql")]
+use snafu::ResultExt;
+use snafu::Snafu;
 use std::str::FromStr;
+#[cfg(feature = "graphql")]
 use tracing::instrument;
 use uuid::Uuid;
 
@@ -20,6 +26,7 @@ pub enum Error {
     Reqwest { msg: String, source: reqwest::Error },
 }
 
+#[cfg(feature = "graphql")]
 impl ErrorExtensions for Error {
     fn extend(&self) -> async_graphql::Error {
         self.extend_with(|err, e| match err {
@@ -34,7 +41,8 @@ impl ErrorExtensions for Error {
 // derive InputObject, and we cannot do that on the model's type without creating
 // a dependency between the model and the outer adapters, which would break the
 // hexagonal architecture.
-#[derive(Serialize, Deserialize, Debug, InputObject)]
+#[derive(Serialize, Deserialize, Debug)]
+#[cfg_attr(feature = "graphql", derive(InputObject))]
 pub struct ListDocumentsRequest {
     pub offset: u32,
     pub limit: u32,
@@ -48,7 +56,8 @@ impl From<ListDocumentsRequest> for model::document::ListDocumentsRequest {
 }
 
 // A GraphQL Input Object to encapsulate the request parameters to get a document.
-#[derive(Serialize, Deserialize, Debug, InputObject)]
+#[derive(Serialize, Deserialize, Debug)]
+#[cfg_attr(feature = "graphql", derive(InputObject))]
 pub struct GetDocumentRequest {
     pub id: Uuid,
 }
@@ -74,6 +83,7 @@ pub struct DocumentResponse {
     pub updated_at: DateTime<Utc>,
 }
 
+#[cfg(feature = "graphql")]
 #[Object]
 impl DocumentResponse {
     async fn id(&self) -> &Uuid {
@@ -147,6 +157,7 @@ pub struct ListDocumentsResponse {
     pub count: usize,
 }
 
+#[cfg(feature = "graphql")]
 #[Object]
 impl ListDocumentsResponse {
     async fn documents(&self) -> &Vec<DocumentResponse> {
@@ -174,6 +185,7 @@ pub struct GetDocumentResponse {
     pub document: DocumentResponse,
 }
 
+#[cfg(feature = "graphql")]
 #[Object]
 impl GetDocumentResponse {
     async fn document(&self) -> &DocumentResponse {
@@ -191,6 +203,7 @@ impl From<Document> for GetDocumentResponse {
 
 pub struct Query;
 
+#[cfg(feature = "graphql")]
 #[Object]
 impl Query {
     async fn list_documents(
@@ -228,7 +241,8 @@ impl Query {
 
 pub struct Mutation;
 
-#[derive(Serialize, Deserialize, Debug, InputObject)]
+#[derive(Serialize, Deserialize, Debug)]
+#[cfg_attr(feature = "graphql", derive(InputObject))]
 pub struct AddDocumentRequest {
     pub id: Uuid,
     pub title: String,
@@ -262,6 +276,7 @@ impl From<AddDocumentRequest> for model::document::AddDocumentRequest {
     }
 }
 
+#[cfg(feature = "graphql")]
 #[Object]
 impl Mutation {
     #[instrument(skip(self, context))]
@@ -283,8 +298,10 @@ impl Mutation {
     }
 }
 
+#[cfg(feature = "graphql")]
 pub type DocStoreSchema = Schema<Query, Mutation, EmptySubscription>;
 
+#[cfg(feature = "graphql")]
 pub fn schema(service: Box<dyn DocumentStorage + Send + Sync>) -> DocStoreSchema {
     Schema::build(Query, Mutation, EmptySubscription)
         .extension(Tracing)
@@ -292,6 +309,7 @@ pub fn schema(service: Box<dyn DocumentStorage + Send + Sync>) -> DocStoreSchema
         .finish()
 }
 
+#[cfg(feature = "graphql")]
 #[allow(clippy::borrowed_box)]
 pub fn get_service_from_context<'ctx>(
     context: &'ctx Context,
