@@ -83,6 +83,12 @@ pub struct DocumentResponse {
     pub updated_at: DateTime<Utc>,
 }
 
+impl PartialEq for DocumentResponse {
+    fn eq(&self, rhs: &Self) -> bool {
+        self.id == rhs.id
+    }
+}
+
 #[cfg(feature = "graphql")]
 #[Object]
 impl DocumentResponse {
