@@ -170,6 +170,9 @@ pub async fn add_document(
         tags,
         genre,
     } = request;
+
+    tracing::info!("adding document {}", id);
+
     let request = add_document::AddDocumentRequest {
         id,
         title,
