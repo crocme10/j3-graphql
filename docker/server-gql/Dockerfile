@@ -28,21 +28,10 @@ RUN USER=root cargo new docstore-server-gql
 WORKDIR /home/docstore-server-gql
 
 COPY ./docstore-server-gql/Cargo.toml ./Cargo.toml
-# COPY ./Cargo.lock ./Cargo.lock
 COPY ./docstore-server-gql/src ./src
-# COPY ./docstore-server-gql/config ./config
 COPY ./docstore-adapter-1ry-gql ../docstore-adapter-1ry-gql
 COPY ./docstore-adapter-2ry-pg ../docstore-adapter-2ry-pg
 COPY ./docstore-domain ../docstore-domain
-
-# COPY ./docker ./docker
-# COPY ./graphql ./graphql
-# COPY ./tests ./tests
-
-# FIXME Why is RUN --mount ... not working
-# RUN --mount=type=cache,target=/usr/local/cargo/registry \
-#     --mount=type=cache,target=/home/docstore/target  \
-#     cargo build --release --locked
 
 RUN cargo build --release
 
