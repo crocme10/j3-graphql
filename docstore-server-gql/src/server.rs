@@ -7,6 +7,7 @@ use http::StatusCode;
 use snafu::{ResultExt, Snafu};
 use std::convert::Infallible;
 use std::net::ToSocketAddrs;
+use tracing::info;
 use tracing::instrument;
 use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
 use tracing_log::LogTracer;
