@@ -44,19 +44,19 @@ pub enum Error {
 pub async fn run(opts: &Opts) -> Result<(), Error> {
     let settings = Settings::new(opts).context(SettingsProcessing)?;
 
-    let app_name = concat!(env!("CARGO_PKG_NAME"), "-", env!("CARGO_PKG_VERSION")).to_string();
-
     let tracer = opentelemetry_jaeger::new_pipeline()
         .with_service_name("J3")
         .install_simple()
         .expect("opentelemetry jaeger");
+
     let opentelemetry = tracing_opentelemetry::layer().with_tracer(tracer);
+
     tracing_subscriber::registry()
         .with(opentelemetry)
         .try_init()
         .expect("open telemetry");
 
-    let root = span!(tracing::Level::INFO, "grapql server", work_units = 2);
+    let root = span!(tracing::Level::INFO, "grapql server");
     let _enter = root.enter();
     run_server(settings).await
 }
