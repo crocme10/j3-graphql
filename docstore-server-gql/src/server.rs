@@ -44,7 +44,6 @@ pub enum Error {
 pub async fn run(opts: &Opts) -> Result<(), Error> {
     let settings = Settings::new(opts).context(SettingsProcessing)?;
 
-    // following code mostly from https://betterprogramming.pub/production-grade-logging-in-rust-applications-2c7fffd108a6
     let app_name = concat!(env!("CARGO_PKG_NAME"), "-", env!("CARGO_PKG_VERSION")).to_string();
 
     let tracer = opentelemetry_jaeger::new_pipeline()
