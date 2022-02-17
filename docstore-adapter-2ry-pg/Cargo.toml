@@ -18,6 +18,7 @@ serde = {version = "=1.0.130", features = ["derive"] }
 snafu = { version = "0.6.10", features = [ "futures" ] }
 sqlx = { version = "0.5.9", default-features = false, features = [ "postgres", "runtime-tokio-native-tls", "chrono", "uuid", "macros" ] }
 tokio = { version = "1.14.0", features = ["macros", "rt-multi-thread"] }
-tracing = "0.1.26"
+tracing = "0.1"
+tracing-attributes = "0.1"
 url = { version = "2.2", features = [ "serde" ] }
 uuid = { version = "0.8", features = ["serde", "v4"] }

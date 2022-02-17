@@ -7,12 +7,10 @@ use http::StatusCode;
 use snafu::{ResultExt, Snafu};
 use std::convert::Infallible;
 use std::net::ToSocketAddrs;
-use tracing::info;
-use tracing::instrument;
-use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
-use tracing_log::LogTracer;
-use tracing_subscriber::layer::SubscriberExt;
-use tracing_subscriber::{EnvFilter, Registry};
+use tracing::span;
+use tracing_attributes::instrument;
+use tracing_subscriber::prelude::*;
+
 use warp::{http::Method, http::Response as HttpResponse, Filter, Rejection};
 
 use super::settings::{Error as SettingsError, Opts, Settings};
@@ -45,19 +43,22 @@ pub enum Error {
 #[allow(clippy::needless_lifetimes)]
 pub async fn run(opts: &Opts) -> Result<(), Error> {
     let settings = Settings::new(opts).context(SettingsProcessing)?;
-    LogTracer::init().expect("Unable to setup log tracer!");
-
-    // let filter = std::env::var("RUST_LOG").unwrap_or_else(|_| "tracing=info,gql=info".to_owned());
 
     // following code mostly from https://betterprogramming.pub/production-grade-logging-in-rust-applications-2c7fffd108a6
     let app_name = concat!(env!("CARGO_PKG_NAME"), "-", env!("CARGO_PKG_VERSION")).to_string();
 
-    let formatting_layer = BunyanFormattingLayer::new(app_name, std::io::stdout);
-    let subscriber = Registry::default()
-        .with(JsonStorageLayer)
-        .with(formatting_layer);
-    tracing::subscriber::set_global_default(subscriber).unwrap();
+    let tracer = opentelemetry_jaeger::new_pipeline()
+        .with_service_name(&app_name)
+        .install_simple()
+        .expect("opentelemetry jaeger");
+    let opentelemetry = tracing_opentelemetry::layer().with_tracer(tracer);
+    tracing_subscriber::registry()
+        .with(opentelemetry)
+        .try_init()
+        .expect("open telemetry");
 
+    let root = span!(tracing::Level::INFO, "app name", work_units = 2);
+    let _enter = root.enter();
     run_server(settings).await
 }
 

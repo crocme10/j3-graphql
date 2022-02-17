@@ -14,7 +14,7 @@ use snafu::ResultExt;
 use snafu::Snafu;
 use std::str::FromStr;
 #[cfg(feature = "graphql")]
-use tracing::instrument;
+use tracing_attributes::instrument;
 use uuid::Uuid;
 
 #[derive(Debug, Snafu)]
@@ -207,11 +207,13 @@ impl From<Document> for GetDocumentResponse {
     }
 }
 
+#[derive(Debug)]
 pub struct Query;
 
 #[cfg(feature = "graphql")]
 #[Object]
 impl Query {
+    #[instrument(skip(self, context))]
     async fn list_documents(
         &self,
         context: &Context<'_>,
@@ -228,6 +230,7 @@ impl Query {
         Ok(ListDocumentsResponse::from(documents))
     }
 
+    #[instrument(skip(self, context))]
     async fn get_document(
         &self,
         context: &Context<'_>,
@@ -244,8 +247,6 @@ impl Query {
         Ok(GetDocumentResponse::from(document))
     }
 }
-
-pub struct Mutation;
 
 #[derive(Serialize, Deserialize, Debug)]
 #[cfg_attr(feature = "graphql", derive(InputObject))]
@@ -281,6 +282,9 @@ impl From<AddDocumentRequest> for model::document::AddDocumentRequest {
         }
     }
 }
+
+#[derive(Debug)]
+pub struct Mutation;
 
 #[cfg(feature = "graphql")]
 #[Object]
