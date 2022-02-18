@@ -2,6 +2,7 @@ use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use sqlx::postgres::PgRow;
 use sqlx::{FromRow, Row};
+use tracing::info;
 use tracing_attributes::instrument;
 use uuid::Uuid;
 
@@ -144,6 +145,7 @@ impl DocumentStorage for PostgresqlStorage {
 
     #[instrument(skip(self))]
     async fn get_document(&self, request: &GetDocumentRequest) -> Result<Document, Error> {
+        tracing::info!("request for document {}", &request.id);
         let entity: DocumentEntity =
             sqlx::query_as(r#"SELECT * FROM api.get_document_by_id($1::UUID)"#)
                 .bind(&request.id)
@@ -152,6 +154,11 @@ impl DocumentStorage for PostgresqlStorage {
                 .map_err(PostgresError::from)?;
 
         let document = Document::from(entity);
+        tracing::info!(
+            "received document {} title {}",
+            &document.id,
+            &document.title
+        );
 
         Ok(document)
     }
