@@ -7,9 +7,7 @@ use http::StatusCode;
 use snafu::{ResultExt, Snafu};
 use std::convert::Infallible;
 use std::net::ToSocketAddrs;
-use tracing::span;
 use tracing_attributes::instrument;
-use tracing_subscriber::prelude::*;
 
 use warp::{http::Method, http::Response as HttpResponse, Filter, Rejection};
 
@@ -44,20 +42,18 @@ pub enum Error {
 pub async fn run(opts: &Opts) -> Result<(), Error> {
     let settings = Settings::new(opts).context(SettingsProcessing)?;
 
-    let tracer = opentelemetry_jaeger::new_pipeline()
-        .with_service_name("J3")
-        .install_simple()
-        .expect("opentelemetry jaeger");
+    // let tracer = opentelemetry_jaeger::new_pipeline()
+    //     .with_service_name("J3")
+    //     .install_simple()
+    //     .expect("opentelemetry jaeger");
 
-    let opentelemetry = tracing_opentelemetry::layer().with_tracer(tracer);
+    // let opentelemetry = tracing_opentelemetry::layer().with_tracer(tracer);
 
-    tracing_subscriber::registry()
-        .with(opentelemetry)
-        .try_init()
-        .expect("open telemetry");
+    tracing_subscriber::fmt()
+        .json()
+        .with_max_level(tracing::Level::INFO)
+        .init();
 
-    let root = span!(tracing::Level::INFO, "grapql server");
-    let _enter = root.enter();
     run_server(settings).await
 }
 
