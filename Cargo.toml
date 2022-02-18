@@ -9,7 +9,7 @@ members = [
 
 [package]
 name = "docstore"
-version = "0.2.6-rc3"
+version = "0.2.6-rc4"
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/crocme10/docstore"
