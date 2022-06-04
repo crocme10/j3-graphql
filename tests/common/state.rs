@@ -6,7 +6,7 @@ use super::error::Error;
 #[derive(Debug, WorldInit)]
 pub struct World {
     // user: Option<String>,
-// capacity: usize,
+    // capacity: usize,
 }
 
 #[async_trait(?Send)]
