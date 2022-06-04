@@ -223,7 +223,7 @@ impl Query {
         let documents = service
             .list_documents(&model::document::ListDocumentsRequest::from(request))
             .await
-            .context(Model {
+            .context(ModelSnafu {
                 msg: "Error Listing Documents",
             })
             .map_err(|e| e.extend())?;
@@ -240,7 +240,7 @@ impl Query {
         let document = service
             .get_document(&model::document::GetDocumentRequest::from(request))
             .await
-            .context(Model {
+            .context(ModelSnafu {
                 msg: "Error Getting Document",
             })
             .map_err(|e| e.extend())?;
@@ -299,7 +299,7 @@ impl Mutation {
         let document = service
             .add_document(&model::document::AddDocumentRequest::from(request))
             .await
-            .context(Model {
+            .context(ModelSnafu {
                 msg: "Error Adding Document",
             })
             .map_err(|e| e.extend())?;

@@ -32,12 +32,12 @@ docstore-adapter-2ry-pg = { path = "docstore-adapter-2ry-pg", optional = true }
 docstore-client-gql = { path = "docstore-client-gql", optional = true }
 
 [dev-dependencies]
-async-trait = "0.1.50"
-cucumber = "0.10"
-lazy_static = "1.4"
-tokio = { version = "1.14.0", features = ["macros", "rt-multi-thread"] }
-url = { version = "2.2", features = [ "serde" ] }
-snafu = { version = "0.6.10", features = [ "futures" ] }
+async-trait = "0.1.56"
+cucumber = "0.13.0"
+lazy_static = "1.4.0"
+tokio = { version = "1.19.0", features = ["macros", "rt-multi-thread"] }
+url = { version = "2.2.2", features = [ "serde" ] }
+snafu = { version = "0.7.1", features = [ "futures" ] }
 
 [[test]]
 name = "e2e"

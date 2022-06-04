@@ -41,7 +41,7 @@ pub async fn connection_pool(config: &PostgresqlStorageConfig) -> Result<PgPool,
         .connect_timeout(Duration::from_millis(config.timeout))
         .connect(config.url.as_str())
         .await
-        .context(PostgresqlConnection)
+        .context(PostgresqlConnectionSnafu)
         .map_err(Into::into)
 }
 

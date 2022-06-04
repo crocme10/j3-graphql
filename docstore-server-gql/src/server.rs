@@ -40,7 +40,7 @@ pub enum Error {
 
 #[allow(clippy::needless_lifetimes)]
 pub async fn run(opts: &Opts) -> Result<(), Error> {
-    let settings = Settings::new(opts).context(SettingsProcessing)?;
+    let settings = Settings::new(opts).context(SettingsProcessingSnafu)?;
 
     // let tracer = opentelemetry_jaeger::new_pipeline()
     //     .with_service_name("J3")
@@ -59,7 +59,7 @@ pub async fn run(opts: &Opts) -> Result<(), Error> {
 
 #[allow(clippy::needless_lifetimes)]
 pub async fn config(opts: &Opts) -> Result<(), Error> {
-    let settings = Settings::new(opts).context(SettingsProcessing)?;
+    let settings = Settings::new(opts).context(SettingsProcessingSnafu)?;
     println!("{}", serde_json::to_string_pretty(&settings).unwrap());
     Ok(())
 }
@@ -68,7 +68,7 @@ pub async fn config(opts: &Opts) -> Result<(), Error> {
 pub async fn run_server(settings: Settings) -> Result<(), Error> {
     let store = postgresql::PostgresqlStorage::new(&settings.postgresql)
         .await
-        .context(Store)?;
+        .context(StoreSnafu)?;
 
     let service = Box::new(store);
 
@@ -119,7 +119,7 @@ pub async fn run_server(settings: Settings) -> Result<(), Error> {
     let addr = (host.as_str(), port);
     let addr = addr
         .to_socket_addrs()
-        .context(SockAddr { host, port })?
+        .context(SockAddrSnafu { host, port })?
         .next()
         .ok_or(Error::AddrResolution {
             msg: String::from("Cannot resolve bragi addr."),

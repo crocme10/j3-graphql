@@ -52,10 +52,10 @@ pub async fn initialize_with_param(cleanup: bool) -> Result<(), Error> {
     let config = PostgresqlStorageConfig::default_testing();
     let _client = remote::connection_pool(&config)
         .await
-        .context(PostgresqlPoolConnectionFailed)?
+        .context(PostgresqlPoolConnectionFailedSnafu)?
         .acquire()
         .await
-        .context(PostgresqlConnectionFailed)?;
+        .context(PostgresqlConnectionFailedSnafu)?;
 
     Ok(())
 }
@@ -183,7 +183,7 @@ impl DockerConfig {
             self.timeout,
             &self.version.clone().into(),
         )
-        .context(DockerConnectionFailed)
+        .context(DockerConnectionFailedSnafu)
     }
 }
 
@@ -213,9 +213,9 @@ impl DockerWrapper {
     pub async fn is_container_available(&mut self) -> Result<bool, Error> {
         let docker = self.docker_config.connect()?;
 
-        let docker = &docker.negotiate_version().await.context(Version)?;
+        let docker = &docker.negotiate_version().await.context(VersionSnafu)?;
 
-        docker.version().await.context(Version)?;
+        docker.version().await.context(VersionSnafu)?;
 
         let mut filters = HashMap::new();
         filters.insert("name", vec![self.docker_config.container.name.as_str()]);
@@ -229,7 +229,7 @@ impl DockerWrapper {
         let containers = docker
             .list_containers(options)
             .await
-            .context(DockerEngine)?;
+            .context(DockerEngineSnafu)?;
 
         Ok(!containers.is_empty())
     }
@@ -239,9 +239,9 @@ impl DockerWrapper {
     pub async fn create_container(&mut self) -> Result<(), Error> {
         let docker = self.docker_config.connect()?;
 
-        let docker = docker.negotiate_version().await.context(Version)?;
+        let docker = docker.negotiate_version().await.context(VersionSnafu)?;
 
-        let _ = docker.version().await.context(Version);
+        let _ = docker.version().await.context(VersionSnafu);
 
         let mut filters = HashMap::new();
         filters.insert("name", vec![self.docker_config.container.name.as_str()]);
@@ -255,7 +255,7 @@ impl DockerWrapper {
         let containers = docker
             .list_containers(options)
             .await
-            .context(DockerEngine)?;
+            .context(DockerEngineSnafu)?;
 
         if containers.is_empty() {
             let options = CreateContainerOptions {
@@ -318,12 +318,12 @@ impl DockerWrapper {
                 )
                 .try_collect::<Vec<_>>()
                 .await
-                .context(DockerEngine)?;
+                .context(DockerEngineSnafu)?;
 
             let _ = docker
                 .create_container(Some(options), config)
                 .await
-                .context(DockerEngine)?;
+                .context(DockerEngineSnafu)?;
 
             sleep(Duration::from_millis(self.docker_config.container_wait)).await;
         }
@@ -333,7 +333,7 @@ impl DockerWrapper {
                 None::<StartContainerOptions<String>>,
             )
             .await
-            .context(DockerEngine)?;
+            .context(DockerEngineSnafu)?;
 
         sleep(Duration::from_millis(
             self.docker_config.container_available,

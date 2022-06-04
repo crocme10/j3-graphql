@@ -53,13 +53,13 @@ pub async fn list_documents(
     let client = reqwest::Client::builder()
         .default_headers(headers)
         .build()
-        .context(Reqwest {
+        .context(ReqwestSnafu {
             msg: "Cannot request list documents",
         })?;
 
     let response = post_graphql::<ListDocuments, _>(&client, url.to_owned(), variables)
         .await
-        .context(Reqwest { msg: "Foo" })?;
+        .context(ReqwestSnafu { msg: "Foo" })?;
     let response_data: list_documents::ResponseData = response.data.expect("response data");
     let documents: Vec<DocumentResponse> = response_data
         .list_documents
@@ -111,13 +111,13 @@ pub async fn get_document(
     let client = reqwest::Client::builder()
         .default_headers(headers)
         .build()
-        .context(Reqwest {
+        .context(ReqwestSnafu {
             msg: "Cannot request get document",
         })?;
 
     let response = post_graphql::<GetDocument, _>(&client, url.to_owned(), variables)
         .await
-        .context(Reqwest { msg: "Foo" })?;
+        .context(ReqwestSnafu { msg: "Foo" })?;
     let response_data: get_document::ResponseData = response.data.expect("response data");
     let doc = response_data.get_document.document;
     Ok(DocumentResponse {
@@ -199,13 +199,13 @@ pub async fn add_document(
     let client = reqwest::Client::builder()
         .default_headers(headers)
         .build()
-        .context(Reqwest {
+        .context(ReqwestSnafu {
             msg: "Cannot request list documents",
         })?;
 
     let response = post_graphql::<AddDocument, _>(&client, url.to_owned(), variables)
         .await
-        .context(Reqwest { msg: "Foo" })?;
+        .context(ReqwestSnafu { msg: "Foo" })?;
     let response_data: add_document::ResponseData = response.data.expect("response data");
     let document = DocumentResponse::from(response_data.add_document);
     Ok(document)

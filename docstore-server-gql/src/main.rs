@@ -10,9 +10,9 @@ pub enum Error {
     #[snafu(display("Clap Error: {}", source))]
     Clap { source: clap::Error },
     #[snafu(display("Command Line Interface Error: {}", msg))]
-    CLIError { msg: String },
+    CLI { msg: String },
     #[snafu(display("Server Error: {}", source))]
-    ServerError {
+    Server {
         #[snafu(backtrace)]
         source: server::Error,
     },
@@ -20,9 +20,9 @@ pub enum Error {
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
-    let opts = settings::Opts::try_parse().context(Clap)?;
+    let opts = settings::Opts::try_parse().context(ClapSnafu)?;
     match opts.cmd {
-        settings::Command::Run => server::run(&opts).await.context(ServerError),
-        settings::Command::Config => server::config(&opts).await.context(ServerError),
+        settings::Command::Run => server::run(&opts).await.context(ServerSnafu),
+        settings::Command::Config => server::config(&opts).await.context(ServerSnafu),
     }
 }

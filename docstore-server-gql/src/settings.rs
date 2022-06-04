@@ -110,9 +110,9 @@ impl Settings {
             ENV_VAR_PREFIX,
             opts.overrides.clone(),
         )
-        .context(ConfigCompilation)?
+        .context(ConfigCompilationSnafu)?
         .try_into()
-        .context(ConfigMerge {
+        .context(ConfigMergeSnafu {
             msg: "cannot merge bragi settings",
         })
     }

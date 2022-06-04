@@ -69,7 +69,9 @@ pub struct PostgresqlStorageConfig {
 
 impl PostgresqlStorage {
     pub async fn new(config: &PostgresqlStorageConfig) -> Result<Self, Error> {
-        let pool = remote::connection_pool(config).await.context(Connection)?;
+        let pool = remote::connection_pool(config)
+            .await
+            .context(ConnectionSnafu)?;
         Ok(PostgresqlStorage {
             pool: Arc::new(pool),
         })
