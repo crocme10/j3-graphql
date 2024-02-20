@@ -9,14 +9,14 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ARG DEBIAN_VERSION
 
-RUN if [ "${DEBIAN_VERSION}" = "buster" ]; then \
+RUN if [ "${DEBIAN_VERSION}" = "bookworm" ]; then \
   apt-get update \
     && apt-get install -y libssl-dev git \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*; \
-elif [ "${DEBIAN_VERSION}" = "stretch" ]; then \
+elif [ "${DEBIAN_VERSION}" = "bullseye" ]; then \
   apt-get update \
-    && apt-get install -y libssl1.0-dev git \
+    && apt-get install -y libssl-dev git \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*; \
 else \
@@ -53,14 +53,14 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ARG DEBIAN_VERSION
 
-RUN if [ "${DEBIAN_VERSION}" = "buster" ]; then \
+RUN if [ "${DEBIAN_VERSION}" = "bookworm" ]; then \
   apt-get update \
     && apt-get install -y libssl-dev git \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*; \
-elif [ "${DEBIAN_VERSION}" = "stretch" ]; then \
+elif [ "${DEBIAN_VERSION}" = "bullseye" ]; then \
   apt-get update \
-    && apt-get install -y libssl1.0-dev git \
+    && apt-get install -y libssl-dev git \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*; \
 else \
